@@ -1,4 +1,9 @@
+=============================================================
 Simple Git Migration Script
+=============================================================
+
+Description
+-------------------------------------------------------------
 
 This script will convert projects stored in SVN with the following format:
 
@@ -9,4 +14,29 @@ tag/tagname
 
 Each project will get synchronized over by project name:
 
-Ex: ./migration project1
+Ex: ./migration https://svnurl.com/path project1
+
+Requirements
+-------------------------------------------------------------
+
+- SVN
+- Native Git
+
+Usage
+-------------------------------------------------------------
+
+You will want to generate a list of commiter first:
+
+Ex: ./migration https://svnurl.com/path
+
+Open the the commiters list file and add email address. Change the following format:
+
+jhuntley = jhuntley <jhuntley>
+
+To:
+
+jhuntley = jhuntley <onepremise@gmail.com>
+
+Each project will get synchronized over by project name:
+
+Ex: ./migration https://svnurl.com/path project1
