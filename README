@@ -25,7 +25,7 @@ Requirements
 Usage
 -------------------------------------------------------------
 
-You will want to generate a list of commiter first:
+You will want to generate a list of committers first:
 
 Ex: ./migration https://svnurl.com/path
 
