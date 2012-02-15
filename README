@@ -16,6 +16,8 @@ Each project will get synchronized over by project name:
 
 Ex: ./migration https://svnurl.com/path project1
 
+The final repository is converted over to a bare git repository.
+
 Requirements
 -------------------------------------------------------------
 
