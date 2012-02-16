@@ -9,8 +9,8 @@ This script will convert projects stored in SVN with the following format:
 
 trunk/project1
 trunk/project2
-branch/branch4project1
-tag/tagname
+branch/branch4project1 or branches/branch4project1
+tags/tagname
 
 Each project will get synchronized over by project name:
 

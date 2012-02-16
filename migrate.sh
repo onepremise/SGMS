@@ -24,11 +24,36 @@ LOG_NAME="migration.log"
 
 SVN_URL=$1
 
+BRANCH_SCHEME="branches"
+
 Validate () {
   if [ -z "$SVN_URL" ]; then
     echo
     echo "Please provide a valid SVN URL!"
     exit 0
+  fi
+  
+  svn ls $SVN_URL --depth empty
+  _error=$?
+  if [ $_error -ne 0 ]; then
+    echo
+    echo "URL not valid!"
+    exit 0
+  fi
+  
+  svn ls $SVN_URL/$BRANCH_SCHEME --depth empty
+  _error=$?
+  if [ $_error -eq 0 ]; then
+    echo
+    echo "Using '$BRANCH_SCHEME' name scheme."
+  else
+    BRANCH_SCHEME="branch"
+    svn ls $SVN_URL/$BRANCH_SCHEME --depth empty
+    _error=$?
+    if [ $_error -eq 0 ]; then
+      echo
+      echo "Using '$BRANCH_SCHEME' name scheme."
+    fi  
   fi
 }
 
@@ -92,7 +117,7 @@ Clone () {
     _lastRev=`svn info $SVN_URL/trunk/$_project|grep -i 'last changed rev'|sed 's/.*: /r/'`
     echo "Transferring all Revisions. Head: $_lastRev."
     
-    git svn clone --authors-file=committers.txt --no-metadata $SVN_URL/trunk $REPOSITORY_NAME/$_project-svn -T $_project -b branch &> $GIT_LOG
+    git svn clone --authors-file=committers.txt --no-metadata $SVN_URL/trunk $REPOSITORY_NAME/$_project-svn -T $_project -b $BRANCH_SCHEME &> $GIT_LOG
     
     _test=`grep -i 'Auto packing' $GIT_LOG | wc -l | tr -d ' '`
     
