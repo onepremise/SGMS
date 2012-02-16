@@ -58,7 +58,7 @@ Validate () {
 }
 
 Initialize () {
-    _project=$1
+    local _project=`NormalizeFullCloneName $1`
     
     GIT_LOG=$GIT_LOG$_project-$LOG_NAME
     
@@ -108,18 +108,25 @@ Initialize () {
 }
 
 Clone () {
-    _project=$1
+    local _project=`NormalizeFullCloneName $1`
     
     echo
     echo "Cloning $_project..."
     echo
     
-    _lastRev=`svn info $SVN_URL/trunk/$_project|grep -i 'last changed rev'|sed 's/.*: /r/'`
+    local _lastRev=""
+    
+    if [ "$1" = "." ]; then
+      _lastRev=`svn info $SVN_URL/trunk/.|grep -i 'last changed rev'|sed 's/.*: /r/'`
+      git svn clone --authors-file=committers.txt --no-metadata $SVN_URL $REPOSITORY_NAME/$_project-svn -T trunk -b $BRANCH_SCHEME -t tags &> $GIT_LOG
+    else
+      _lastRev=`svn info $SVN_URL/trunk/$_project|grep -i 'last changed rev'|sed 's/.*: /r/'`
+      git svn clone --authors-file=committers.txt --no-metadata $SVN_URL/trunk $REPOSITORY_NAME/$_project-svn -T $_project -b $BRANCH_SCHEME -t tags &> $GIT_LOG
+    fi
+    
     echo "Transferring all Revisions. Head: $_lastRev."
     
-    git svn clone --authors-file=committers.txt --no-metadata $SVN_URL/trunk $REPOSITORY_NAME/$_project-svn -T $_project -b $BRANCH_SCHEME &> $GIT_LOG
-    
-    _test=`grep -i 'Auto packing' $GIT_LOG | wc -l | tr -d ' '`
+    local _test=`grep -i 'Auto packing' $GIT_LOG | wc -l | tr -d ' '`
     
     if [ $_test = "0" ]; then
       echo
@@ -131,10 +138,10 @@ Clone () {
 }
 
 Update () {
-    _project=$1-svn
-    _lastRev=$2
+    local _project=`NormalizeFullCloneName $1`-svn
+    local _lastRev=$2
     
-    _i=0
+    local _i=0
     
     echo
     echo "Updating $_project..."
@@ -188,7 +195,7 @@ Update () {
 }
 
 CreateGitRepo () {
-    _project=$1
+    local _project=`NormalizeFullCloneName $1`
     
     echo
     echo "Creating bare git repo for $_project..."
@@ -202,7 +209,7 @@ CreateGitRepo () {
 }
 
 PushContentsToGit() {
-    _project=$1
+    local _project=`NormalizeFullCloneName $1`
     
     echo
     echo "Push contents to git repo for $_project..."
@@ -217,7 +224,7 @@ PushContentsToGit() {
 }
 
 RenameTrunkToMaster() {
-    _project=$1
+    local _project=`NormalizeFullCloneName $1`
       
     echo
     echo "Creating master branch for $_project..."
@@ -229,7 +236,7 @@ RenameTrunkToMaster() {
 }
 
 CleanupBranchesTags() {
-  _project=$1
+  local _project=`NormalizeFullCloneName $1`
 
   cd $REPOSITORY/$REPOSITORY_NAME/$_project
   
@@ -242,8 +249,8 @@ CleanupBranchesTags() {
 }
 
 BackupSvnClone() {
-    _TFILE=".$$.bak"
-    _project=$1
+    local _TFILE=".$$.bak"
+    local _project=`NormalizeFullCloneName $1`
     
     echo backup/$_project-svn$_TFILE
       
@@ -262,6 +269,16 @@ BackupSvnClone() {
       echo "Moving to backup directory..."
       mv $REPOSITORY_NAME/$_project-svn backup/$_project-svn$_TFILE
     fi
+}
+
+NormalizeFullCloneName() {
+  local _project=$1
+  
+  if [ "$_project" = "." ]; then
+    _project="full"
+  fi
+  
+  echo "$_project"
 }
     
 echo

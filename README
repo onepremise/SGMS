@@ -7,29 +7,53 @@ Description
 
 This script will convert projects stored in SVN with the following format:
 
-trunk/project1
-trunk/project2
-branch/branch4project1 or branches/branch4project1
-tags/tagname
+/trunk
+      /Project1
+      /Project2
+/branches
+         /Project1
+         /Project2
+/tags
+     /Project1
+     /Project2
+     
+This scheme is also popular and supported as well:
+
+/Project1
+         /trunk
+         /branches
+         /tags
+/Project2
+         /trunk
+         /branches
+         /tags
 
 Each project will get synchronized over by project name:
 
-Ex: ./migration https://svnurl.com/path project1
+Ex: ./migration https://svnurl.com/basepath project1
+
+If you wish to convert the full repo over, use the following syntax:
+
+Ex: ./migration https://svnurl.com/basepath .
 
 The final repository is converted over to a bare git repository.
 
 Requirements
 -------------------------------------------------------------
 
+Mac OS X, Linux:
 - SVN
 - Native Git
+
+Windows:
+-You will need MSYSGIT, http://code.google.com/p/msysgit/downloads/list
 
 Usage
 -------------------------------------------------------------
 
 You will want to generate a list of committers first:
 
-Ex: ./migration https://svnurl.com/path
+Ex: ./migration https://svnurl.com/basepath
 
 Open the the commiters list file and add email address. Change the following format:
 
@@ -41,4 +65,8 @@ jhuntley = jhuntley <onepremise@gmail.com>
 
 Each project will get synchronized over by project name:
 
-Ex: ./migration https://svnurl.com/path project1
+Ex: ./migration https://svnurl.com/basepath project1
+
+If you wish to convert the full repo over, use the following syntax:
+
+Ex: ./migration https://svnurl.com/basepath .
